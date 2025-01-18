@@ -20,11 +20,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1  # Replace with your AWS region
 
-      - name: Install AWS CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
-
       - name: Sync frontend files to S3
         run: |
           aws s3 sync ./frontend/ s3://rahul-qrcg-use1-prod-frontend/ --delete
