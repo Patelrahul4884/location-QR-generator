@@ -6,59 +6,112 @@
   <title>QR Code Generator</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       text-align: center;
-      margin: 20px;
+      width: 100%;
+      max-width: 400px;
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
     }
     input[type="text"] {
-      width: 300px;
-      padding: 10px;
+      width: 80%;
+      padding: 12px;
       margin: 10px 0;
       font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
     }
     button {
-      padding: 10px 20px;
+      padding: 12px 24px;
       font-size: 16px;
       background-color: #4CAF50;
       color: white;
       border: none;
+      border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #45a049;
     }
     img {
       margin-top: 20px;
-      max-width: 300px;
+      max-width: 100%;
       height: auto;
+      border-radius: 8px;
     }
     .error {
       color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .default-image {
+      margin-top: 20px;
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .download-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: none;
+    }
+    .download-btn:hover {
+      background-color: #0056b3;
     }
   </style>
 </head>
 <body>
-  <h1>QR Code Generator</h1>
-  <p>Enter a URL below to generate its QR code:</p>
-  <input type="text" id="urlInput" placeholder="Enter URL here">
-  <br>
-  <button id="generateButton">Generate QR Code</button>
-  <p class="error" id="errorMessage"></p>
-  <div id="qrCodeContainer">
-    <img id="qrCodeImage" alt="QR Code will appear here">
+  <div class="container">
+    <h1>QR Code Generator</h1>
+    <p>Enter a URL below to generate its QR code:</p>
+    <input type="text" id="urlInput" placeholder="Enter URL here">
+    <br>
+    <button id="generateButton">Generate QR Code</button>
+    <p class="error" id="errorMessage"></p>
+    <div id="qrCodeContainer">
+      <!-- Default QR code image (Earth location) -->
+      <img class="default-image" id="qrCodeImage" src="https://api.qrserver.com/v1/create-qr-code/?data=https://maps.app.goo.gl/TwSga6uJqNm4JxkX6&size=200x200" alt="QR Code will appear here">
+    </div>
+    <button class="download-btn" id="downloadButton">Download QR Code</button>
   </div>
 
   <script>
     const generateButton = document.getElementById("generateButton");
     const qrCodeImage = document.getElementById("qrCodeImage");
     const errorMessage = document.getElementById("errorMessage");
+    const downloadButton = document.getElementById("downloadButton");
 
     generateButton.addEventListener("click", async () => {
       const urlInput = document.getElementById("urlInput").value;
 
       // Clear previous error message and QR code
       errorMessage.textContent = "";
-      qrCodeImage.src = "";
+      qrCodeImage.src = "https://api.qrserver.com/v1/create-qr-code/?data=https://maps.app.goo.gl/TwSga6uJqNm4JxkX6&size=200x200"; // Default Earth location
+
+      // Hide download button initially
+      downloadButton.style.display = "none";
 
       if (!urlInput) {
         errorMessage.textContent = "Please enter a URL.";
@@ -74,7 +127,18 @@
 
         // Display the QR code
         const qrBlob = await response.blob();
-        qrCodeImage.src = URL.createObjectURL(qrBlob);
+        const qrCodeUrl = URL.createObjectURL(qrBlob);
+        qrCodeImage.src = qrCodeUrl;
+
+        // Show the download button and link it to the generated QR code
+        downloadButton.style.display = "inline-block";
+        downloadButton.addEventListener("click", () => {
+          const a = document.createElement("a");
+          a.href = qrCodeUrl;
+          a.download = "qr_code.png";
+          a.click();
+        });
+
       } catch (error) {
         errorMessage.textContent = error.message;
       }
