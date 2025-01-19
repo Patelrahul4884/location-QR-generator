@@ -1,0 +1,13 @@
+{
+    "production": {
+        "app_function": "app.app",
+        "aws_region": "us-east-1",
+        "profile_name": "default",
+        "project_name": "qr-code-generator-backend",
+        "runtime": "python3.12",
+        "memory_size": 128,
+        "timeout_seconds": 30,
+        "manage_roles": true,
+        "keep_warm": false
+    }
+}
