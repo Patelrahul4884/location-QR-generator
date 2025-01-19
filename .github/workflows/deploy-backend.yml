@@ -3,7 +3,7 @@ name: Deploy Backend to AWS Lambda
 on:
   push:
     branches:
-      - main  # Trigger on push to the main branch
+      - main
 
 jobs:
   deploy:
@@ -18,19 +18,18 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Replace with your AWS region
+          aws-region: us-east-1
 
-      - name: Install Zappa
+      - name: Set up Python and virtual environment
         run: |
-          python -m pip install --upgrade pip
+          python3 -m venv env
+          source env/bin/activate
+          pip install --upgrade pip
           pip install zappa
-
-      - name: Install backend dependencies
-        working-directory: ./backend
-        run: |
-          pip install -r requirements.txt
+          pip install -r backend/requirements.txt
 
       - name: Deploy Flask app to Lambda
         working-directory: ./backend
         run: |
+          source ../env/bin/activate
           zappa deploy production
